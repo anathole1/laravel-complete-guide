@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,15 +15,20 @@ use App\Http\Controllers\BrandController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
 
 Route::get('/', function () {
-    return view('welcome');
+     $brands = DB::table('brands')->get();
+     
+    return view('home', compact('brands'));
 });
 
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    $users = User::all();
-    return view('dashboard', compact('users'));
+    // $users = User::all();, compact('users')
+    return view('admin.index');
 })->name('dashboard');
  
 // __________view,delete,update,delete,restore,permanent delete category________ 
@@ -47,3 +53,15 @@ Route::get('/brand/delete/{id}', [BrandController::class, 'Delete']);
 //multi Image
 Route::get('/multi/image',[BrandController::class, 'MultiImage'])->name('multi.image');
 Route::post('/multi/store_image',[BrandController::class, 'StoreImages'])->name('store.image');
+
+
+
+// Admin All Route
+Route::get('/home/slider',[HomeController::class,'HomeSlider'])->name('home.slider');
+Route::post('/slider/add',[HomeController::class, 'AddSlider'])->name('store.slider');
+
+
+//logout route
+
+Route::get('/user/logout', [BrandController::class, 'Logout'])->name('user.logout');
+
